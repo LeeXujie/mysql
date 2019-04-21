@@ -1,0 +1,30 @@
+#IncludeRegexLine: ^[ 	]*#[ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+../include/mydb.h
+iostream
+-
+string
+-
+mysql/mysql.h
+-
+
+/home/jay/mysql/src/mydb.cpp
+iostream
+-
+cstdlib
+-
+mydb.h
+/home/jay/mysql/src/mydb.h
+
+/home/jay/mysql/test/main.cpp
+iostream
+-
+mydb.h
+/home/jay/mysql/test/mydb.h
+

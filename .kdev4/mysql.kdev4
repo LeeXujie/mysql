@@ -1,0 +1,41 @@
+[Buildset]
+BuildItems=@Variant(\x00\x00\x00\t\x00\x00\x00\x00\x01\x00\x00\x00\x0b\x00\x00\x00\x00\x01\x00\x00\x00\n\x00m\x00y\x00s\x00q\x00l)
+
+[CMake]
+Build Directory Count=1
+Current Build Directory Index=0
+ProjectRootRelative=./
+
+[CMake][CMake Build Directory 0]
+Build Directory Path=file:///home/jay/mysql/build
+Build Type=
+CMake Binary=file:///usr/bin/cmake
+Environment Profile=
+Extra Arguments=
+Install Directory=file:///usr/local
+
+[Defines And Includes][Compiler]
+Name=GCC
+Path=gcc
+Type=GCC
+
+[Launch]
+Launch Configurations=Launch Configuration 0
+
+[Launch][Launch Configuration 0]
+Configured Launch Modes=execute
+Configured Launchers=nativeAppLauncher
+Name=mysql_test
+Type=Native Application
+
+[Launch][Launch Configuration 0][Data]
+Arguments=
+Dependencies=@Variant(\x00\x00\x00\t\x00\x00\x00\x00\x01\x00\x00\x00\x0b\x00\x00\x00\x00\x02\x00\x00\x00\n\x00m\x00y\x00s\x00q\x00l\x00\x00\x00\x14\x00m\x00y\x00s\x00q\x00l\x00_\x00t\x00e\x00s\x00t)
+Dependency Action=Build
+EnvironmentGroup=
+Executable=file:///home/jay/mysql/
+External Terminal=konsole --noclose --workdir %workdir -e %exe
+Project Target=mysql,mysql_test
+Use External Terminal=false
+Working Directory=
+isExecutable=false
