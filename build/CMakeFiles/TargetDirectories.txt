@@ -1,3 +1,0 @@
-/home/jay/mysql/build/CMakeFiles/edit_cache.dir
-/home/jay/mysql/build/CMakeFiles/rebuild_cache.dir
-/home/jay/mysql/build/CMakeFiles/mysql_test.dir
