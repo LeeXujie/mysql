@@ -1,7 +1,8 @@
-#ifndef __MYBD_H__
-#include<iostream>
-#include<string.h>
-#include<mysql/mysql.h>
+#ifndef _MYBD_H_
+#define _MYBD_H_
+#include <iostream>
+#include <string.h>
+#include <mysql/mysql.h>
 
 class MyDB
 {
@@ -29,6 +30,7 @@ private:
 
     bool setUTF8();
     bool getResult();
+    bool checkExistTable( char* table );
 };
 
 #endif
