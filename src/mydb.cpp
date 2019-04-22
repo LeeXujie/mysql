@@ -60,7 +60,7 @@ bool MyDB::QueryInfo ( string sql )
 bool MyDB::CreateDB ( char* database )
 {
     char sql[1024];
-    sprintf ( sql,"create database %s",database );
+    sprintf ( sql,"create database if not exists %s",database );
     if ( mysql_query ( connection, sql ) )  //执行SQL语句
     {
         printf ( "Create database failed (%s).\n",mysql_error ( connection ) );
@@ -68,7 +68,7 @@ bool MyDB::CreateDB ( char* database )
     }
     else
     {
-        printf ( "Create database success.\n" );
+//         printf ( "Create database '%s' success.\n",database );
         return false;
     }
 }
@@ -77,7 +77,7 @@ bool MyDB::CreateDB ( char* database )
 bool MyDB::CreateTable ( char* table, char* fields )
 {
     char sql[1024];
-    sprintf ( sql,"create table %s(%s)", table, fields );
+    sprintf ( sql,"create table if not exists %s(%s)", table, fields );
     if ( mysql_query ( connection, sql ) )  //执行SQL语句
     {
         printf ( "Create table failed (%s).\n",mysql_error ( connection ) );
@@ -85,7 +85,7 @@ bool MyDB::CreateTable ( char* table, char* fields )
     }
     else
     {
-        printf ( "Create table success.\n" );
+//         printf ( "Create table '%s' success.\n",table );
         return true;
     }
 }
@@ -187,7 +187,7 @@ bool MyDB::QueryData2 ( char* table, char* field_name, char* field_value )
     }
 }
 
-//查询数据（某行某列）
+//查询数据（某行中的某个值）
 bool MyDB::QueryData3 ( char* table, char* query_name, char* field_name, char* field_value )
 {
     char sql[1024];
@@ -214,7 +214,7 @@ bool MyDB::QueryData3 ( char* table, char* query_name, char* field_name, char* f
 bool MyDB::TruncateTable ( char* table )
 {
     char sql[1024];
-    sprintf ( sql,"truncate table %s",table );
+    sprintf ( sql,"truncate table if exists %s",table );
     if ( mysql_query ( connection, sql ) )  //执行SQL语句
     {
         printf ( "Truncate table '%s' failed (%s).\n", table, mysql_error ( connection ) );
@@ -222,7 +222,7 @@ bool MyDB::TruncateTable ( char* table )
     }
     else
     {
-        printf ( "Table '%s' has been truncated.\n", table );
+//         printf ( "Table '%s' has been truncated.\n", table );
         return false;
     }
 }
@@ -231,7 +231,7 @@ bool MyDB::TruncateTable ( char* table )
 bool MyDB::TruncateDB ( char* database )
 {
     char sql[1024];
-    sprintf ( sql,"truncate table %s",database );
+    sprintf ( sql,"truncate table if exists %s",database );
     if ( mysql_query ( connection, sql ) )  //执行SQL语句
     {
         printf ( "Truncate database '%s' failed (%s).\n", database, mysql_error ( connection ) );
@@ -239,7 +239,7 @@ bool MyDB::TruncateDB ( char* database )
     }
     else
     {
-        printf ( "Database '%s' has been truncated.\n", database );
+//         printf ( "Database '%s' has been truncated.\n", database );
         return false;
     }
 }
@@ -248,7 +248,7 @@ bool MyDB::TruncateDB ( char* database )
 bool MyDB::DropTable ( char* table )
 {
     char sql[1024];
-    sprintf ( sql,"drop table %s",table );
+    sprintf ( sql,"drop table if exists %s",table );
     if ( mysql_query ( connection, sql ) )  //执行SQL语句
     {
         printf ( "Drop table '%s' failed (%s).\n", table, mysql_error ( connection ) );
@@ -256,7 +256,7 @@ bool MyDB::DropTable ( char* table )
     }
     else
     {
-        printf ( "Table '%s' has been droped.\n", table );
+//         printf ( "Table '%s' has been droped.\n", table );
         return false;
     }
 }
@@ -265,7 +265,7 @@ bool MyDB::DropTable ( char* table )
 bool MyDB::DropDB ( char* database )
 {
     char sql[1024];
-    sprintf ( sql,"drop table %s",database );
+    sprintf ( sql,"drop table if exists %s",database );
     if ( mysql_query ( connection, sql ) )  //执行SQL语句
     {
         printf ( "Drop database '%s' failed (%s).\n", database, mysql_error ( connection ) );
@@ -273,10 +273,9 @@ bool MyDB::DropDB ( char* database )
     }
     else
     {
-        printf ( "Database '%s' has been droped.\n", database );
+//         printf ( "Database '%s' has been droped.\n", database );
         return false;
     }
-
 }
 
 //设置utf8编码
