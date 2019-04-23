@@ -69,7 +69,7 @@ bool MyDB::CreateDB ( char* database )
     else
     {
 //         printf ( "Create database '%s' success.\n",database );
-        return false;
+        return true;
     }
 }
 
@@ -86,6 +86,23 @@ bool MyDB::CreateTable ( char* table, char* fields )
     else
     {
 //         printf ( "Create table '%s' success.\n",table );
+        return true;
+    }
+}
+
+//创建临时表
+bool MyDB::CreateTmpTable ( char* table, char* fields )
+{
+    char sql[1024];
+    sprintf ( sql,"create temporary table if not exists %s(%s)", table, fields );
+    if ( mysql_query ( connection, sql ) )  //执行SQL语句
+    {
+        printf ( "Create temporary table failed (%s).\n",mysql_error ( connection ) );
+        return false;
+    }
+    else
+    {
+//         printf ( "Create temporary table '%s' success.\n",table );
         return true;
     }
 }
@@ -210,6 +227,161 @@ bool MyDB::QueryData3 ( char* table, char* query_name, char* field_name, char* f
     }
 }
 
+//查询第n行的某个元素，并获得它的值
+bool MyDB::GetValue ( char* table, char* query_name, std::string &query_value, int n )
+{
+    char sql[1024];
+    sprintf ( sql,"select %s from %s limit %d,1", query_name, table, n );
+    if ( mysql_query ( connection, sql ) )
+    {
+        printf ( "Query data failed (%s).\n", mysql_error ( connection ) );
+        return false;
+    }
+    else
+    {
+        result = mysql_store_result ( connection );
+        if ( !result )
+        {
+            printf ( "Couldn't get result from %s.\n", mysql_error ( connection ) );
+            return false;
+        }
+        // 获取列数
+        int j = mysql_num_fields ( result );
+
+        //存储字段信息
+        char *str_field[1024];
+
+        //获取字段名
+        for ( int i = 0; i < mysql_num_fields ( result ); i++ )
+        {
+            str_field[i] = mysql_fetch_field ( result )->name;
+            if ( 0==strcmp ( query_name, str_field[i] ) )
+            {
+                j=i;
+                break;
+            }
+        }
+
+        if ( row = mysql_fetch_row ( result ) )
+        {
+            query_value=row[j];
+            return true;
+        }
+        return false;
+    }
+}
+
+//获得表中主键的最大值
+bool MyDB::GetMaxPrimarykey ( char* table, char* primary_key, int &max_value )
+{
+    char sql[1024];
+    sprintf ( sql,"select max(%s) from %s", primary_key, table );
+    if ( mysql_query ( connection, sql ) )
+    {
+        printf ( "Query data failed (%s).\n", mysql_error ( connection ) );
+        return false;
+    }
+    else
+    {
+        result = mysql_store_result ( connection );
+        if ( !result )
+        {
+            printf ( "Couldn't get result from %s.\n", mysql_error ( connection ) );
+            return false;
+        }
+
+        if ( row = mysql_fetch_row ( result ) )
+        {
+            max_value=atoi ( row[0] );
+            return true;
+        }
+        return false;
+    }
+}
+
+//获得某字段为某值的所有行数
+bool MyDB::GetRowsNum ( char* table, char* field_value, int& num )
+{
+    char sql[1024];
+    sprintf ( sql,"select * from %s where %s", table, field_value );
+    if ( mysql_query ( connection, sql ) )
+    {
+        printf ( "Query data failed (%s).\n", mysql_error ( connection ) );
+        return false;
+    }
+    else
+    {
+        result = mysql_store_result ( connection );
+        if ( !result )
+        {
+            printf ( "Couldn't get result from %s.\n", mysql_error ( connection ) );
+            return false;
+        }
+        num=mysql_affected_rows ( connection );
+        return true;
+    }
+}
+
+//将从原表中查询的某些数据复制到另一个表中
+bool MyDB::CopyTable ( char* copy_table, char* prim_table, char* range )
+{
+    char sql[1024];
+    sprintf ( sql,"insert into %s select * from %s where %s",copy_table,prim_table,range );
+    if ( mysql_query ( connection, sql ) )  //执行SQL语句
+    {
+        printf ( "Copy table from '%s' to '%s' failed (%s).\n", prim_table, copy_table, mysql_error ( connection ) );
+        return false;
+    }
+    else
+    {
+//         printf ( "Copy table from '%s' to '%s' success (%s).\n", prim_table, copy_table );
+        return true;
+    }
+}
+
+//导出表为txt文件
+bool MyDB::ExpTable ( char* table, char* fields, char* save_name )
+{
+    char sql[1024];
+    sprintf ( sql,"select %s from %s into outfile '/var/lib/mysql-files/%s.txt'",fields,table,save_name );
+    if ( mysql_query ( connection, sql ) )  //执行SQL语句
+    {
+        printf ( "Saving '%s' failed (%s).\n", table, mysql_error ( connection ) );
+        return false;
+    }
+    else
+    {
+        printf ( "Table %s has been saved as '/var/lib/mysql-files/%s.txt'.\n", table, save_name );
+        return true;
+    }
+}
+
+//获取当前日期
+bool MyDB::GetDate ( std::string &current_date )
+{
+    if ( mysql_query ( connection, "SELECT CURRENT_DATE()" ) )
+    {
+        printf ( "Query data failed (%s).\n", mysql_error ( connection ) );
+        return false;
+    }
+    else
+    {
+        result = mysql_store_result ( connection );
+        if ( !result )
+        {
+            printf ( "Couldn't get result from %s.\n", mysql_error ( connection ) );
+            return false;
+        }
+
+        if ( row = mysql_fetch_row ( result ) )
+        {
+            current_date = row[0];
+            return true;
+        }
+        return false;
+    }
+}
+
 //清空表
 bool MyDB::TruncateTable ( char* table )
 {
@@ -223,7 +395,7 @@ bool MyDB::TruncateTable ( char* table )
     else
     {
 //         printf ( "Table '%s' has been truncated.\n", table );
-        return false;
+        return true;
     }
 }
 
@@ -240,7 +412,7 @@ bool MyDB::TruncateDB ( char* database )
     else
     {
 //         printf ( "Database '%s' has been truncated.\n", database );
-        return false;
+        return true;
     }
 }
 
@@ -257,7 +429,7 @@ bool MyDB::DropTable ( char* table )
     else
     {
 //         printf ( "Table '%s' has been droped.\n", table );
-        return false;
+        return true;
     }
 }
 
@@ -274,7 +446,7 @@ bool MyDB::DropDB ( char* database )
     else
     {
 //         printf ( "Database '%s' has been droped.\n", database );
-        return false;
+        return true;
     }
 }
 
